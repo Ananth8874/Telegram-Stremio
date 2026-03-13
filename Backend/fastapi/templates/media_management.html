@@ -4,20 +4,19 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header -->
-    <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div class="app-panel p-6 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-3xl font-bold">Media Management</h1>
-            <p class="theme-text-secondary mt-2">Manage your movie and TV show collections</p>
+            <p class="theme-text-secondary mt-2 text-sm">Manage your movie and TV show collections faster.</p>
         </div>
 
         <div class="flex space-x-2">
             <a href="/media/manage?media_type=movie"
-                class="px-4 py-2 rounded-md transition-colors text-sm font-medium {% if media_type == 'movie' %}bg-blue-600 text-white{% else %}theme-card border hover:bg-gray-50{% endif %}">
+                class="px-4 py-2 rounded-md transition-colors text-sm font-medium {% if media_type == 'movie' %}bg-primary text-white{% else %}theme-input hover:opacity-90{% endif %}">
                 Movies
             </a>
             <a href="/media/manage?media_type=tv"
-                class="px-4 py-2 rounded-md transition-colors text-sm font-medium {% if media_type == 'tv' %}bg-blue-600 text-white{% else %}theme-card border hover:bg-gray-50{% endif %}">
+                class="px-4 py-2 rounded-md transition-colors text-sm font-medium {% if media_type == 'tv' %}bg-primary text-white{% else %}theme-input hover:opacity-90{% endif %}">
                 TV Shows
             </a>
         </div>
@@ -28,15 +27,15 @@
         <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
                 <input type="text" id="search-input" placeholder="Search {{ media_type }}s by title..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                    class="w-full px-4 py-2 theme-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
             </div>
             <div class="flex gap-2">
                 <button onclick="searchMedia()"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors text-sm font-medium shadow-sm">
+                    class="bg-primary hover:opacity-90 text-white px-6 py-2 rounded-md transition-colors text-sm font-medium shadow-sm">
                     Search
                 </button>
                 <button onclick="clearSearch()"
-                    class="border border-gray-300 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">
+                    class="theme-input px-6 py-2 rounded-md hover:opacity-90 transition-colors text-sm font-medium">
                     Clear
                 </button>
             </div>
@@ -61,7 +60,7 @@
             </div>
             <p id="error-message" class="text-red-600 mb-4"></p>
             <button onclick="retryLoad()"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors text-sm shadow-sm">
+                class="bg-primary hover:opacity-90 text-white px-4 py-2 rounded-md transition-colors text-sm shadow-sm">
                 Try Again
             </button>
         </div>
@@ -89,7 +88,7 @@
                 {% endif %}
             </p>
             <button onclick="clearSearch()"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors text-sm shadow-sm">
+                class="bg-primary hover:opacity-90 text-white px-4 py-2 rounded-md transition-colors text-sm shadow-sm">
                 Show All {{ media_type|title }}s
             </button>
         </div>
@@ -295,7 +294,7 @@
             const isActive = i === currentPage;
             paginationHTML += `
             <button onclick="loadMedia(${i}, '${currentSearch}')" 
-                    class="px-3 py-2 border rounded-md transition-colors text-sm ${isActive ? 'bg-blue-600 text-white border-blue-600' : 'hover:bg-gray-50'
+                    class="px-3 py-2 border rounded-md transition-colors text-sm ${isActive ? 'bg-primary text-white border-primary' : 'hover:bg-gray-50'
                 }">
                 ${i}
             </button>

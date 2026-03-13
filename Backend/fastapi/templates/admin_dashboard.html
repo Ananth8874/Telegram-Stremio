@@ -3,177 +3,295 @@
 {% block title %}Admin Dashboard - Telegram Stremio{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-text">
-    <div class="mb-8 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-text">Admin Dashboard</h1>
-            <p class="mt-2 text-sm theme-text-secondary">Monitor system health and manage flagged dead links.</p>
-        </div>
-    </div>
-
-    <!-- System Health Section -->
-    <div class="mb-10">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-text">System Health</h2>
-            <button onclick="clearCache()"
-                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm flex items-center justify-center">
-                <i class="fas fa-trash-alt mr-2"></i> Clear File Cache
-            </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="stats-container">
-            <!-- Cache Card -->
-            <div class="theme-card rounded-xl border p-6 shadow-sm">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
-                        <i class="fas fa-memory text-xl text-primary"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-sm font-medium theme-text-secondary">Cached File IDs</h3>
-                        <p class="text-2xl font-bold text-text" id="stat-cache-size">-</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-text space-y-8">
+    <section class="theme-card rounded-2xl border shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-primary/20 via-transparent to-accent/20 p-6 md:p-8">
+            <div class="flex flex-col gap-6 lg:flex-row lg:justify-between lg:items-center">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider theme-text-secondary">Operations center</p>
+                    <h1 class="text-3xl md:text-4xl font-bold mt-2">Admin Dashboard</h1>
+                    <p class="mt-3 text-sm md:text-base theme-text-secondary max-w-2xl">
+                        Monitor stream performance, keep bots healthy, and quickly remove broken links from the catalog.
+                    </p>
+                    <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+                        <span class="px-3 py-1 rounded-full bg-green-500/10 text-green-500 font-semibold">Live telemetry</span>
+                        <span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold">Auto-refresh every 10s</span>
+                        <span class="px-3 py-1 rounded-full bg-white/5 theme-text-secondary" id="last-updated-pill">Last updated: --</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Active Bots Card -->
-            <div class="theme-card rounded-xl border p-6 shadow-sm">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
-                        <i class="fas fa-robot text-xl text-primary"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-sm font-medium theme-text-secondary">Connected Bots</h3>
-                        <p class="text-2xl font-bold text-text" id="stat-bot-count">-</p>
-                    </div>
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+                    <button onclick="clearCache()"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors shadow-sm flex items-center justify-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Clear File Cache
+                    </button>
+                    <button onclick="clearAnalytics()"
+                        class="bg-primary hover:opacity-90 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-opacity shadow-sm flex items-center justify-center">
+                        <i class="fas fa-chart-line mr-2"></i> Reset Analytics
+                    </button>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Bot Health & Load -->
-        <div class="theme-card rounded-xl border shadow-sm mt-6">
-            <div class="flex items-center justify-between px-6 py-4 border-b">
-                <div class="flex items-center gap-3">
-                    <div class="bg-primary/10 p-2 rounded-lg">
-                        <i class="fas fa-heartbeat text-primary"></i>
-                    </div>
-                    <h3 class="text-base font-semibold text-text">Bot Health & Load</h3>
+    <section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="theme-card rounded-xl border p-5 shadow-sm">
+                <p class="text-xs uppercase tracking-wider theme-text-secondary font-semibold">Cached File IDs</p>
+                <div class="mt-3 flex items-end justify-between">
+                    <p class="text-3xl font-bold" id="stat-cache-size">-</p>
+                    <i class="fas fa-memory text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="theme-card rounded-xl border p-5 shadow-sm">
+                <p class="text-xs uppercase tracking-wider theme-text-secondary font-semibold">Connected Bots</p>
+                <div class="mt-3 flex items-end justify-between">
+                    <p class="text-3xl font-bold" id="stat-bot-count">-</p>
+                    <i class="fas fa-robot text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="theme-card rounded-xl border p-5 shadow-sm">
+                <p class="text-xs uppercase tracking-wider theme-text-secondary font-semibold">Total Active Streams</p>
+                <div class="mt-3 flex items-end justify-between">
+                    <p class="text-3xl font-bold" id="stat-active-streams">-</p>
+                    <i class="fas fa-signal text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="theme-card rounded-xl border p-5 shadow-sm">
+                <p class="text-xs uppercase tracking-wider theme-text-secondary font-semibold">Health Score</p>
+                <div class="mt-3 flex items-end justify-between">
+                    <p class="text-3xl font-bold" id="stat-health-score">-</p>
+                    <i class="fas fa-heartbeat text-primary text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="theme-card rounded-xl border shadow-sm mt-6 overflow-hidden">
+            <div class="px-6 py-4 border-b flex items-center gap-3">
+                <div class="bg-primary/10 p-2 rounded-lg">
+                    <i class="fas fa-heartbeat text-primary"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-semibold">Bot Health & Load</h2>
+                    <p class="text-xs theme-text-secondary">Capacity, average speed, and failures by bot</p>
                 </div>
             </div>
             <div id="stat-workloads" class="divide-y divide-white/10">
                 <div class="px-6 py-4 text-sm theme-text-secondary">Loading...</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Stream Analytics -->
-    <div class="mb-10">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-text">Recent Stream Analytics</h2>
-            <button onclick="clearAnalytics()"
-                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm flex items-center">
-                <i class="fas fa-trash-alt mr-2"></i> Clear Analytics
+    <section class="theme-card border rounded-xl overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+                <h2 class="text-xl font-semibold">Recent Stream Analytics</h2>
+                <p class="text-xs theme-text-secondary mt-1">Real-time stream events across all bots</p>
+            </div>
+            <button onclick="fetchAnalytics()"
+                class="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                <i class="fas fa-rotate mr-2"></i> Refresh Table
             </button>
         </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-text">
+                <thead class="text-xs uppercase border-b text-text bg-white/5">
+                    <tr>
+                        <th class="px-6 py-4 font-semibold">Stream ID</th>
+                        <th class="px-6 py-4 font-semibold">Title</th>
+                        <th class="px-6 py-4 font-semibold text-center">Bot (DC)</th>
+                        <th class="px-6 py-4 font-semibold text-right">Data</th>
+                        <th class="px-6 py-4 font-semibold text-right">Avg / Peak</th>
+                        <th class="px-6 py-4 font-semibold text-center">Duration</th>
+                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                        <th class="px-6 py-4 font-semibold text-right">Time</th>
+                    </tr>
+                </thead>
+                <tbody id="analytics-tbody" class="divide-y divide-white/10">
+                    <tr>
+                        <td colspan="8" class="px-6 py-8 text-center theme-text-secondary">
+                            <i class="fas fa-spinner fa-spin text-primary mr-2"></i> Loading analytics...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-        <div class="theme-card border rounded-xl overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-text">
-                    <thead class="text-xs uppercase theme-card border-b text-text">
-                        <tr>
-                            <th class="px-6 py-4 font-semibold">Stream ID</th>
-                            <th class="px-6 py-4 font-semibold">Title</th>
-                            <th class="px-6 py-4 font-semibold text-center">Bot (DC)</th>
-                            <th class="px-6 py-4 font-semibold text-right">Data Transferred</th>
-                            <th class="px-6 py-4 font-semibold text-right">Avg / Peak Speed</th>
-                            <th class="px-6 py-4 font-semibold text-center">Duration</th>
-                            <th class="px-6 py-4 font-semibold text-center">Status</th>
-                            <th class="px-6 py-4 font-semibold text-right">Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="analytics-tbody" class="divide-y divide-white/10">
-                        <tr>
-                            <td colspan="8" class="px-6 py-8 text-center theme-text-secondary">
-                                <i class="fas fa-spinner fa-spin text-primary mr-2"></i> Loading analytics...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <section class="theme-card border rounded-xl overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-semibold">Flagged Dead Links</h2>
+                    <p class="text-xs theme-text-secondary mt-1">Search and remove broken qualities quickly</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input id="dead-links-search" type="text" placeholder="Search title, quality, year..."
+                        class="theme-card border rounded-md px-3 py-2 text-sm w-full sm:w-64">
+                    <select id="dead-links-type-filter" class="theme-card border rounded-md px-3 py-2 text-sm w-full sm:w-40">
+                        <option value="all">All types</option>
+                        <option value="movie">Movies</option>
+                        <option value="tv">TV series</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Dead Links -->
-    <div>
-        <h2 class="text-xl font-semibold text-text mb-4">Flagged Dead Links</h2>
-        <div class="theme-card border rounded-xl overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-text">
-                    <thead class="text-xs uppercase theme-card border-b text-text">
-                        <tr>
-                            <th class="px-6 py-4 font-semibold">Title</th>
-                            <th class="px-6 py-4 font-semibold w-24">Type</th>
-                            <th class="px-6 py-4 font-semibold">Quality Details</th>
-                            <th class="px-6 py-4 font-semibold w-32 text-center">Date Added</th>
-                            <th class="px-6 py-4 font-semibold w-24 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dead-links-tbody" class="divide-y divide-white/10">
-                        <tr>
-                            <td colspan="5" class="px-6 py-8 text-center theme-text-secondary">
-                                <i class="fas fa-spinner fa-spin text-primary mr-2"></i> Loading dead links...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-text">
+                <thead class="text-xs uppercase border-b text-text bg-white/5">
+                    <tr>
+                        <th class="px-6 py-4 font-semibold">Title</th>
+                        <th class="px-6 py-4 font-semibold w-24">Type</th>
+                        <th class="px-6 py-4 font-semibold">Quality Details</th>
+                        <th class="px-6 py-4 font-semibold w-32 text-center">Date Added</th>
+                        <th class="px-6 py-4 font-semibold w-24 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="dead-links-tbody" class="divide-y divide-white/10">
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center theme-text-secondary">
+                            <i class="fas fa-spinner fa-spin text-primary mr-2"></i> Loading dead links...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
+    </section>
 </div>
 
 <script>
+    let deadLinksCache = [];
+
+    function updateLastUpdated() {
+        const now = new Date();
+        const label = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('last-updated-pill').textContent = `Last updated: ${label}`;
+    }
+
+    function getStatusPillClass(status) {
+        if (status === 'error' || status === 'failing') return 'bg-red-500/10 text-red-500';
+        if (status === 'cancelled' || status === 'degraded') return 'bg-yellow-500/10 text-yellow-500';
+        return 'bg-green-500/10 text-green-500';
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function toNumber(value, fallback = 0) {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : fallback;
+    }
+
+    function renderDeadLinks(links) {
+        const tbody = document.getElementById('dead-links-tbody');
+        if (!links.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center theme-text-secondary">No dead links match your current filters.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        links.forEach((l, idx) => {
+            const typeBadge = l.type === 'movie'
+                ? '<span class="px-2 py-1 rounded bg-primary/10 text-primary text-xs font-medium">Movie</span>'
+                : '<span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs font-medium">TV Series</span>';
+
+            html += `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-text">${escapeHtml(l.title)}</div>
+                        <div class="text-xs theme-text-secondary">${escapeHtml(l.year || '')}</div>
+                    </td>
+                    <td class="px-6 py-4">${typeBadge}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-medium text-red-500">${escapeHtml(l.quality)}</div>
+                        <div class="text-xs theme-text-secondary">${escapeHtml(l.size || 'Unknown size')}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center theme-text-secondary text-xs">${l.date_added ? new Date(l.date_added).toLocaleDateString() : '—'}</td>
+                    <td class="px-6 py-4 text-center">
+                        <button
+                            type="button"
+                            class="delete-dead-link text-red-500 hover:text-red-600 bg-red-500/10 hover:bg-red-500/20 rounded p-2 transition-colors"
+                            title="Delete from Database"
+                            data-index="${idx}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function applyDeadLinksFilters() {
+        const search = document.getElementById('dead-links-search').value.trim().toLowerCase();
+        const type = document.getElementById('dead-links-type-filter').value;
+
+        const filtered = deadLinksCache.filter(link => {
+            const normalizedType = link.type === 'movie' ? 'movie' : 'tv';
+            const typePass = type === 'all' || type === normalizedType;
+            const searchBlob = `${link.title || ''} ${link.quality || ''} ${link.year || ''} ${link.size || ''}`.toLowerCase();
+            const searchPass = !search || searchBlob.includes(search);
+            return typePass && searchPass;
+        });
+
+        renderDeadLinks(filtered);
+    }
+
     async function fetchStats() {
         try {
             const res = await fetch('/api/admin/system-stats');
-            if (res.ok) {
-                const data = await res.json();
-                document.getElementById('stat-cache-size').textContent = data.cache_size;
-                document.getElementById('stat-bot-count').textContent = data.total_bots;
+            if (!res.ok) return;
 
-                let wlHtml = '';
-                if (data.bot_workloads && data.bot_workloads.length > 0) {
-                    data.bot_workloads.forEach(b => {
-                        let statusColor = 'bg-green-500/10 text-green-500';
-                        if (b.status === 'degraded') statusColor = 'bg-yellow-500/10 text-yellow-500';
-                        if (b.status === 'failing') statusColor = 'bg-red-500/10 text-red-500';
+            const data = await res.json();
+            document.getElementById('stat-cache-size').textContent = toNumber(data.cache_size, 0);
+            document.getElementById('stat-bot-count').textContent = toNumber(data.total_bots, 0);
 
-                        wlHtml += `
-                            <div class="flex items-center justify-between px-6 py-4 hover:bg-white/5 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <span class="font-semibold text-text">${b.display_name}</span>
-                                    <span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider ${statusColor}">${b.status}</span>
+            const botWorkloads = Array.isArray(data.bot_workloads) ? data.bot_workloads : [];
+            const activeStreams = botWorkloads.reduce((acc, bot) => acc + toNumber(bot.current_load, 0), 0);
+            const healthyBots = botWorkloads.filter(bot => bot.status === 'healthy').length;
+            const healthScore = botWorkloads.length ? Math.round((healthyBots / botWorkloads.length) * 100) : 100;
+
+            document.getElementById('stat-active-streams').textContent = activeStreams;
+            document.getElementById('stat-health-score').textContent = `${healthScore}%`;
+
+            let wlHtml = '';
+            if (botWorkloads.length > 0) {
+                botWorkloads.forEach(b => {
+                    wlHtml += `
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between px-6 py-4 hover:bg-white/5 transition-colors gap-3">
+                            <div class="flex items-center gap-3">
+                                <span class="font-semibold text-text">${escapeHtml(b.display_name || 'Bot')}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider ${getStatusPillClass(b.status)}">${escapeHtml(b.status || 'unknown')}</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-sm w-full md:w-auto">
+                                <div class="text-center">
+                                    <div class="text-xs theme-text-secondary mb-0.5">Active Streams</div>
+                                    <div class="font-bold text-text">${toNumber(b.current_load, 0)}</div>
                                 </div>
-                                <div class="flex items-center gap-6 text-sm">
-                                    <div class="text-center">
-                                        <div class="text-xs theme-text-secondary mb-0.5">Active Streams</div>
-                                        <div class="font-bold text-text">${b.current_load}</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-xs theme-text-secondary mb-0.5">Avg Speed</div>
-                                        <div class="font-bold text-text">${b.avg_mbps} <span class="font-normal text-xs theme-text-secondary">MB/s</span></div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-xs theme-text-secondary mb-0.5">Recent Failures</div>
-                                        <div class="font-bold ${b.failures > 0 ? 'text-red-500' : 'theme-text-secondary'}">${b.failures}</div>
-                                    </div>
+                                <div class="text-center">
+                                    <div class="text-xs theme-text-secondary mb-0.5">Avg Speed</div>
+                                    <div class="font-bold text-text">${toNumber(b.avg_mbps, 0)} <span class="font-normal text-xs theme-text-secondary">MB/s</span></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs theme-text-secondary mb-0.5">Recent Failures</div>
+                                    <div class="font-bold ${toNumber(b.failures, 0) > 0 ? 'text-red-500' : 'theme-text-secondary'}">${toNumber(b.failures, 0)}</div>
                                 </div>
                             </div>
-                        `;
-                    });
-                } else {
-                    wlHtml = '<div class="px-6 py-8 text-center theme-text-secondary">No bot data available</div>';
-                }
-                document.getElementById('stat-workloads').innerHTML = wlHtml;
+                        </div>
+                    `;
+                });
+            } else {
+                wlHtml = '<div class="px-6 py-8 text-center theme-text-secondary">No bot data available</div>';
             }
+
+            document.getElementById('stat-workloads').innerHTML = wlHtml;
+            updateLastUpdated();
         } catch (err) {
             console.error(err);
         }
@@ -183,42 +301,47 @@
         try {
             const res = await fetch('/api/admin/stream-analytics');
             const tbody = document.getElementById('analytics-tbody');
-            if (res.ok) {
-                const data = await res.json();
-                const streams = data.data.recent;
+            if (!res.ok) return;
 
-                if (!streams || streams.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center theme-text-secondary">No recent streams recorded.</td></tr>';
-                    return;
-                }
+            const data = await res.json();
+            const streams = data?.data?.recent || [];
 
-                let html = '';
-                streams.forEach(s => {
-                    const mbpsStr = `${s.avg_mbps.toFixed(1)} / <span class="theme-text-secondary">${s.peak_mbps.toFixed(1)}</span>`;
-                    const bytesStr = (s.total_bytes / (1024 * 1024)).toFixed(1) + ' MB';
-                    const timeStr = new Date(s.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const durationStr = s.duration_sec ? `${s.duration_sec.toFixed(1)}s` : '—';
-                    const titleStr = s.title || s.meta?.title || '—';
-
-                    let statusColor = 'text-green-500';
-                    if (s.status === 'error') statusColor = 'text-red-500';
-                    if (s.status === 'cancelled') statusColor = 'text-yellow-500';
-
-                    html += `
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="px-6 py-3 font-mono text-xs theme-text-secondary truncate max-w-[120px]" title="${s.stream_id}">${s.stream_id}</td>
-                            <td class="px-6 py-3 text-sm font-medium text-text max-w-[160px] truncate" title="${titleStr}">${titleStr}</td>
-                            <td class="px-6 py-3 text-center">Bot ${s.client_index + 1} <span class="text-xs theme-text-secondary ml-1">(DC${s.dc_id})</span></td>
-                            <td class="px-6 py-3 text-right font-medium text-text">${bytesStr}</td>
-                            <td class="px-6 py-3 text-right font-medium text-text">${mbpsStr} <span class="text-xs theme-text-secondary">MB/s</span></td>
-                            <td class="px-6 py-3 text-center theme-text-secondary">${durationStr}</td>
-                            <td class="px-6 py-3 text-center capitalize text-xs font-bold ${statusColor}">${s.status}</td>
-                            <td class="px-6 py-3 text-right theme-text-secondary text-xs">${timeStr}</td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html;
+            if (!streams.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center theme-text-secondary">No recent streams recorded.</td></tr>';
+                return;
             }
+
+            let html = '';
+            streams.forEach(s => {
+                const avg = toNumber(s.avg_mbps, 0).toFixed(1);
+                const peak = toNumber(s.peak_mbps, 0).toFixed(1);
+                const totalBytes = toNumber(s.total_bytes, 0);
+                const bytesStr = (totalBytes / (1024 * 1024)).toFixed(1) + ' MB';
+                const timeStr = s.logged_at
+                    ? new Date(s.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : '—';
+                const durationSec = toNumber(s.duration_sec, 0);
+                const durationStr = durationSec ? `${durationSec.toFixed(1)}s` : '—';
+                const titleStr = escapeHtml(s.title || s.meta?.title || '—');
+
+                html += `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="px-6 py-3 font-mono text-xs theme-text-secondary truncate max-w-[120px]" title="${escapeHtml(s.stream_id)}">${escapeHtml(s.stream_id)}</td>
+                        <td class="px-6 py-3 text-sm font-medium text-text max-w-[220px] truncate" title="${titleStr}">${titleStr}</td>
+                        <td class="px-6 py-3 text-center">Bot ${toNumber(s.client_index, 0) + 1} <span class="text-xs theme-text-secondary ml-1">(DC${toNumber(s.dc_id, 0)})</span></td>
+                        <td class="px-6 py-3 text-right font-medium text-text">${bytesStr}</td>
+                        <td class="px-6 py-3 text-right font-medium text-text">${avg} / <span class="theme-text-secondary">${peak}</span> <span class="text-xs theme-text-secondary">MB/s</span></td>
+                        <td class="px-6 py-3 text-center theme-text-secondary">${durationStr}</td>
+                        <td class="px-6 py-3 text-center">
+                            <span class="capitalize text-xs font-bold px-2 py-1 rounded-full ${getStatusPillClass(s.status)}">${escapeHtml(s.status || 'unknown')}</span>
+                        </td>
+                        <td class="px-6 py-3 text-right theme-text-secondary text-xs">${timeStr}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            updateLastUpdated();
         } catch (err) {
             console.error(err);
         }
@@ -227,70 +350,36 @@
     async function fetchDeadLinks() {
         try {
             const res = await fetch('/api/admin/dead-links');
-            const tbody = document.getElementById('dead-links-tbody');
-            if (res.ok) {
-                const data = await res.json();
-                const links = data.data;
+            if (!res.ok) return;
 
-                if (links.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center theme-text-secondary">No dead links found. All files are healthy!</td></tr>';
-                    return;
-                }
-
-                let html = '';
-                links.forEach(l => {
-                    const typeBadge = l.type === 'movie'
-                        ? '<span class="px-2 py-1 rounded bg-primary/10 text-primary text-xs font-medium">Movie</span>'
-                        : '<span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs font-medium">TV Series</span>';
-
-                    html += `
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-text">${l.title}</div>
-                                <div class="text-xs theme-text-secondary">${l.year || ''}</div>
-                            </td>
-                            <td class="px-6 py-4">${typeBadge}</td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-red-500">${l.quality}</div>
-                                <div class="text-xs theme-text-secondary">${l.size || 'Unknown size'}</div>
-                            </td>
-                            <td class="px-6 py-4 text-center theme-text-secondary text-xs">${l.date_added ? new Date(l.date_added).toLocaleDateString() : '—'}</td>
-                            <td class="px-6 py-4 text-center">
-                                <button onclick="deleteDeadLink(${l.tmdb_id}, ${l.db_index}, '${l.type}', '${l.quality_id}', ${l.season || -1}, ${l.episode || -1})"
-                                        class="text-red-500 hover:text-red-600 bg-red-500/10 hover:bg-red-500/20 rounded p-2 transition-colors"
-                                        title="Delete from Database">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html;
-            }
+            const data = await res.json();
+            deadLinksCache = Array.isArray(data.data) ? data.data : [];
+            applyDeadLinksFilters();
+            updateLastUpdated();
         } catch (err) {
             console.error(err);
         }
     }
 
     async function clearCache() {
-        if (!confirm("Are you sure you want to clear the Telegram FileId cache? This will force bots to re-fetch metadata on the next stream.")) return;
+        if (!confirm('Are you sure you want to clear the Telegram FileId cache? This will force bots to re-fetch metadata on the next stream.')) return;
 
         try {
             const res = await fetch('/api/admin/clear-cache', { method: 'POST' });
             if (res.ok) {
                 const data = await res.json();
-                alert(data.message);
+                alert(data.message || 'Cache cleared successfully.');
                 fetchStats();
-            } else {
-                alert("Failed to clear cache.");
+                return;
             }
+            alert('Failed to clear cache.');
         } catch (err) {
-            alert("Error clearing cache.");
+            alert('Error clearing cache.');
         }
     }
 
     async function clearAnalytics() {
-        if (!confirm("Are you sure you want to clear all stream analytics history? This cannot be undone.")) return;
+        if (!confirm('Are you sure you want to clear all stream analytics history? This cannot be undone.')) return;
 
         try {
             const res = await fetch('/api/admin/clear-analytics', { method: 'POST' });
@@ -298,43 +387,63 @@
                 const data = await res.json();
                 alert(data.message || 'Analytics cleared successfully.');
                 fetchAnalytics();
-            } else {
-                const err = await res.json().catch(() => ({}));
-                alert(err.detail || 'Failed to clear analytics.');
+                return;
             }
+            const err = await res.json().catch(() => ({}));
+            alert(err.detail || 'Failed to clear analytics.');
         } catch (err) {
             alert('Error clearing analytics.');
         }
     }
 
-    async function deleteDeadLink(tmdb_id, db_index, type, quality_id, season, episode) {
-        if (!confirm("Are you sure you want to purge this dead link from the database? Users will no longer see this quality in Stremio.")) return;
+    async function deleteDeadLink(link) {
+        if (!link) return;
+        if (!confirm('Are you sure you want to purge this dead link from the database? Users will no longer see this quality in Stremio.')) return;
 
         try {
             let endpoint = '';
-            if (type === 'movie') {
-                endpoint = `/api/media/delete-quality?tmdb_id=${tmdb_id}&db_index=${db_index}&id=${quality_id}`;
+            if (link.type === 'movie') {
+                endpoint = `/api/media/delete-quality?tmdb_id=${encodeURIComponent(link.tmdb_id)}&db_index=${encodeURIComponent(link.db_index)}&id=${encodeURIComponent(link.quality_id)}`;
             } else {
-                endpoint = `/api/media/delete-tv-quality?tmdb_id=${tmdb_id}&db_index=${db_index}&season=${season}&episode=${episode}&id=${quality_id}`;
+                endpoint = `/api/media/delete-tv-quality?tmdb_id=${encodeURIComponent(link.tmdb_id)}&db_index=${encodeURIComponent(link.db_index)}&season=${encodeURIComponent(link.season || -1)}&episode=${encodeURIComponent(link.episode || -1)}&id=${encodeURIComponent(link.quality_id)}`;
             }
 
             const res = await fetch(endpoint, { method: 'DELETE' });
             if (res.ok) {
-                fetchDeadLinks(); // Refresh table
-            } else {
-                alert("Failed to delete the dead link.");
+                fetchDeadLinks();
+                return;
             }
+            alert('Failed to delete the dead link.');
         } catch (err) {
-            alert("Error communicating with server.");
+            alert('Error communicating with server.');
         }
     }
 
-    // Initial fetch on load
     document.addEventListener('DOMContentLoaded', () => {
         fetchStats();
         fetchAnalytics();
         fetchDeadLinks();
-        // Refresh dynamic stats
+
+        document.getElementById('dead-links-search').addEventListener('input', applyDeadLinksFilters);
+        document.getElementById('dead-links-type-filter').addEventListener('change', applyDeadLinksFilters);
+        document.getElementById('dead-links-tbody').addEventListener('click', (event) => {
+            const btn = event.target.closest('.delete-dead-link');
+            if (!btn) return;
+            const idx = Number(btn.dataset.index);
+            const filtered = (() => {
+                const search = document.getElementById('dead-links-search').value.trim().toLowerCase();
+                const type = document.getElementById('dead-links-type-filter').value;
+                return deadLinksCache.filter(link => {
+                    const normalizedType = link.type === 'movie' ? 'movie' : 'tv';
+                    const typePass = type === 'all' || type === normalizedType;
+                    const searchBlob = `${link.title || ''} ${link.quality || ''} ${link.year || ''} ${link.size || ''}`.toLowerCase();
+                    const searchPass = !search || searchBlob.includes(search);
+                    return typePass && searchPass;
+                });
+            })();
+            deleteDeadLink(filtered[idx]);
+        });
+
         setInterval(fetchStats, 10000);
         setInterval(fetchAnalytics, 15000);
     });
