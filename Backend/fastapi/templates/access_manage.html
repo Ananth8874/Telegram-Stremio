@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Access Management{% endblock %}
 {% block content %}
+<style>
+    .admin-local-panel {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+    .admin-local-input {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.38);
+        color: inherit;
+    }
+    .admin-local-input::placeholder { color: rgba(148, 163, 184, 0.95); }
+    .admin-local-input:focus {
+        outline: none;
+        border-color: rgba(59,130,246,0.9);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    .admin-local-table thead { background: rgba(255,255,255,0.04); }
+</style>
+
 <div class="container mx-auto px-4 py-8 max-w-7xl">
 
     <!-- Header -->
@@ -17,15 +38,15 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="theme-card rounded-xl p-4 text-center">
+        <div class="theme-card admin-local-panel rounded-xl p-4 text-center">
             <div class="text-2xl font-bold text-primary" id="stat-total">–</div>
             <div class="text-xs text-text opacity-60 mt-1">Total Tokens</div>
         </div>
-        <div class="theme-card rounded-xl p-4 text-center">
+        <div class="theme-card admin-local-panel rounded-xl p-4 text-center">
             <div class="text-2xl font-bold text-green-500" id="stat-active">–</div>
             <div class="text-xs text-text opacity-60 mt-1">Active</div>
         </div>
-        <div class="theme-card rounded-xl p-4 text-center">
+        <div class="theme-card admin-local-panel rounded-xl p-4 text-center">
             <div class="text-2xl font-bold text-red-400" id="stat-expired">–</div>
             <div class="text-xs text-text opacity-60 mt-1">Expired / No Sub</div>
         </div>
@@ -37,14 +58,14 @@
             class="flex-1 min-w-[200px] theme-input rounded-lg px-4 py-2 text-sm"
             oninput="renderPage()">
         <select id="filter-status"
-            class="theme-input rounded-lg px-3 py-2 text-sm"
+            class="theme-input admin-local-input rounded-lg px-3 py-2 text-sm"
             onchange="renderPage()">
             <option value="all">All Status</option>
             <option value="active">🟢 Active</option>
             <option value="expired">🔴 Expired</option>
         </select>
         <select id="page-size"
-            class="theme-input rounded-lg px-3 py-2 text-sm"
+            class="theme-input admin-local-input rounded-lg px-3 py-2 text-sm"
             onchange="currentPage=1; renderPage()">
             <option value="10">10 / page</option>
             <option value="25">25 / page</option>
@@ -53,7 +74,7 @@
     </div>
 
     <!-- Token Table -->
-    <div class="app-panel overflow-hidden">
+    <div class="app-panel admin-local-panel overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>

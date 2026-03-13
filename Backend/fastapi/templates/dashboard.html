@@ -3,9 +3,30 @@
 {% block title %}Dashboard - Telegram Stremio{% endblock %}
 
 {% block content %}
+<style>
+    .admin-local-panel {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+    .admin-local-input {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.38);
+        color: inherit;
+    }
+    .admin-local-input::placeholder { color: rgba(148, 163, 184, 0.95); }
+    .admin-local-input:focus {
+        outline: none;
+        border-color: rgba(59,130,246,0.9);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    .admin-local-table thead { background: rgba(255,255,255,0.04); }
+</style>
+
 <div class="min-h-screen">
     <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mb-8">
-        <div class="app-panel p-6 md:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="app-panel admin-local-panel p-6 md:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold">Dashboard</h1>
                 <p class="theme-text-secondary mt-1 text-sm">Live system overview, bot status and stream telemetry.</p>
@@ -29,7 +50,7 @@
         <div class="mb-8">
             <div class="grid lg:grid-cols-2 gap-8">
                 <!-- System Status Card -->
-                <div class="theme-card rounded-xl p-8 shadow-xl">
+                <div class="theme-card admin-local-panel rounded-xl p-8 shadow-xl">
                     <div class="flex items-center mb-6">
                         <div
                             class="w-12 h-12 theme-primary rounded-lg flex items-center justify-center mr-4 bg-opacity-20 text-primary">
@@ -71,7 +92,7 @@
                 <!-- Bot Workload Section -->
                 <!-- Live Streaming Status Card -->
                 <div class="streams-container">
-                    <div class="theme-card rounded-xl p-8 shadow-xl">
+                    <div class="theme-card admin-local-panel rounded-xl p-8 shadow-xl">
                         <div class="flex items-center mb-6">
                             <div
                                 class="w-12 h-12 theme-primary rounded-lg flex items-center justify-center mr-4 bg-opacity-20 text-primary">
@@ -224,7 +245,7 @@
             <div class="grid lg:grid-cols-2 gap-6">
                 {% if system_stats.databases %}
                 {% for db_stat in system_stats.databases %}
-                <div class="theme-card rounded-xl p-8 shadow-xl w-full flex flex-col h-full">
+                <div class="theme-card admin-local-panel rounded-xl p-8 shadow-xl w-full flex flex-col h-full">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-semibold">{{ db_stat.db_name.replace("storage_", "Database ") }}</h3>
                         <div
@@ -322,7 +343,7 @@
         </div>
 
         <!-- Access Management Section -->
-        <div class="theme-card rounded-xl p-8 shadow-xl mb-8">
+        <div class="theme-card admin-local-panel rounded-xl p-8 shadow-xl mb-8">
             <div class="text-center mb-8">
                 <div
                     class="w-16 h-16 theme-primary rounded-full flex items-center justify-center mx-auto mb-4 bg-opacity-20 text-primary">
