@@ -91,32 +91,24 @@ def parse_range_header(range_header: str, file_size: int):
 def select_best_client(target_dc: int) -> int:
     """Pick the best available client.
 
-    Score = work_loads + 3 × client_failures
-    Failures are weighted 3× so a bot that has been timing out / erroring
-    is deprioritised even if its current workload is low.
-    DC-aware selection is kept but currently commented out (uncomment to
-    prefer same-DC bots).
+    Prioritizes same-DC matches, but falls back to the healthiest global bot
+    if no matching DC is found or all matching bots are overloaded.
     """
     def _score(idx: int) -> int:
         return work_loads.get(idx, 0) + 3 * client_failures.get(idx, 0)
 
-    # --- DC-aware selection (Enabled) ---------------------------------------
+    # --- DC-aware selection ---
     matching = [
         idx for idx, dc in client_dc_map.items()
         if dc == target_dc and idx in multi_clients
     ]
     if matching:
         selected = min(matching, key=_score)
-        LOGGER.debug("DC-match client %s (DC %s) score=%s", selected, target_dc, _score(selected))
         return selected
-    # ------------------------------------------------------------------------
 
+    # Fallback to healthiest global bot
     if multi_clients:
         selected = min(multi_clients.keys(), key=_score)
-        LOGGER.debug(
-            "Selected client %s (DC %s) score=%s",
-            selected, client_dc_map.get(selected, "?"), _score(selected),
-        )
         return selected
 
     return 0
@@ -263,14 +255,22 @@ async def media_streamer(
         from Backend.pyrofork.bot import work_loads, client_failures
         return work_loads.get(idx, 0) + 3 * client_failures.get(idx, 0)
 
-    # Multi-connection striping: get all matching bots in DC, otherwise fallback globally
+    # Multi-connection striping: Use ALL available bots to maximize speed,
+    # but prioritize same-DC bots first for lower initial latency.
     dc_clients = [idx for idx, dc in client_dc_map.items() if dc == target_dc and idx in multi_clients]
-    if dc_clients:
-        client_pool = sorted(dc_clients, key=_score)
-    else:
-        client_pool = [select_best_client(target_dc)]
+    other_clients = [idx for idx in multi_clients if idx not in dc_clients]
+    
+    # Sort both groups by health/load
+    dc_clients_sorted = sorted(dc_clients, key=_score)
+    other_clients_sorted = sorted(other_clients, key=_score)
+    
+    # Combined pool prioritizing same-DC
+    client_pool = dc_clients_sorted + other_clients_sorted
+    
+    if not client_pool:
+        client_pool = [0] # fallback to primary bot
 
-    # Primary client is the healthiest one
+    # Primary client is the healthiest one from the preferred DC (if any)
     index = client_pool[0]
     tg_client = multi_clients[index]
 
