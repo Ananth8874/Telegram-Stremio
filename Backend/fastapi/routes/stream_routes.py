@@ -386,11 +386,15 @@ async def media_streamer(
 async def get_stream_stats():
     now = time.time()
     PRUNE_SECONDS = 3
+    INACTIVE_TIMEOUT = 10 
 
     for sid, info in list(ACTIVE_STREAMS.items()):
         status = info.get("status")
         # Check end_ts first, which is set when a stream organically finishes
         last_ts = info.get("end_ts") or info.get("last_ts") or info.get("start_ts", now)
+        if status == "active" and (now - last_ts > INACTIVE_TIMEOUT):
+            info["status"] = "finished"
+            info["end_ts"] = last_ts
         if status in ("cancelled", "error", "finished"):
             if now - last_ts > PRUNE_SECONDS:
                 try:
