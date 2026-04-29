@@ -9,7 +9,7 @@ class Telegram:
     BOT_TOKEN = getenv("BOT_TOKEN", "8224774305:AAHjHNJRMJQnBj8XZUZOcSmqCSzGGehaV8s")
     HELPER_BOT_TOKEN = getenv("HELPER_BOT_TOKEN", "")
 
-    BASE_URL = getenv("BASE_URL", "").rstrip('/')
+    BASE_URL = getenv("BASE_URL", "https://tamizhzone.koyeb.app").rstrip('/')
     PORT = int(getenv("PORT", "8000"))
 
     PARALLEL = int(getenv("PARALLEL", "1"))
