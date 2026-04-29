@@ -16,7 +16,7 @@ class Telegram:
     PRE_FETCH = int(getenv("PRE_FETCH", "1"))
 
     AUTH_CHANNEL = [channel.strip() for channel in (getenv("AUTH_CHANNEL") or "-1003974332689").split(",") if channel.strip()]
-    DATABASE = [db.strip() for db in (getenv("DATABASE") or "mongodb+srv://jeevanantham8157:1055221@tamizhzone.b0bx6bx.mongodb.net/?appName=TamizhZone").split(",") if db.strip()]
+    DATABASE = [db.strip() for db in (getenv("DATABASE") or "mongodb+srv://jeevanantham8157:1055221@tamizhzone.b0bx6bx.mongodb.net/?appName=TamizhZone, mongodb+srv://jeevanantham8157:1055221@itzheartbot1.63xqs.mongodb.net/?appName=Itzheartbot1").split(",") if db.strip()]
 
     TMDB_API = getenv("TMDB_API", "57d8345a6dd40ec2ca3cc43ba707457c")
 
