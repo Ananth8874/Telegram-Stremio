@@ -1,41 +1,57 @@
-type: web
-name: telegram-stremio
-project: telegram-stremio
-lang: docker
-
-docker:
-  dockerfile: Dockerfile
-
-instance_type: free
-
+name: tamizhzone-backend
+type: WEB
+strategy:
+  type: DEPLOYMENT_STRATEGY_TYPE_ROLLING
+routes:
+  - port: 8080
+    path: /
+    security_policies: null
+ports:
+  - port: 8080
+    protocol: http
+proxy_ports: []
+env: []
 regions:
   - fra
-
-routes:
-  - path: /
-    port: 8080
-
-env:
-  PORT: 8080
-
-  API_ID:
-  API_HASH:
-  BOT_TOKEN:
-  HELPER_BOT_TOKEN:
-
-  OWNER_ID:
-
-  DATABASE:
-  
-  AUTH_CHANNEL:
-
-  TMDB_API:
-
-  BASE_URL:
-
-  ADMIN_USERNAME:
-  ADMIN_PASSWORD:
-
-  SUBSCRIPTION: "false"
-
-  Proxy: "False"
+scalings:
+  - scopes:
+      - region:fra
+    min: 0
+    max: 1
+    targets:
+      - sleep_idle_delay:
+          value: 0
+          deep_sleep_value: 3900
+          light_sleep_value: 0
+instance_types:
+  - scopes:
+      - region:fra
+    type: free
+health_checks:
+  - grace_period: 120      # ← Changed from 5 to 120 seconds
+    interval: 30
+    restart_limit: 3
+    timeout: 10            # ← Changed from 5 to 10 seconds
+    http:                  # ← Changed from tcp to http
+      port: 8080
+      path: /health        # ← Added health endpoint
+volumes: []
+config_files: []
+skip_cache: false
+mesh: DEPLOYMENT_MESH_AUTO
+git:
+  repository: github.com/Ananth8874/Telegram-Stremio
+  branch: master
+  tag: ""
+  sha: 38ea43188ade5ba0d0ffc28afb06a6e44f885593
+  build_command: ""
+  run_command: "uv run -m Backend"  # ← Make sure this is correct
+  no_deploy_on_push: false
+  workdir: ""
+  docker:
+    dockerfile: ""
+    entrypoint: []
+    command: ""
+    args: []
+    target: ""
+    privileged: false
