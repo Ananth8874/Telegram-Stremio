@@ -6,7 +6,7 @@ load_dotenv(path.join(path.dirname(path.dirname(__file__)), "config.env"))
 class Telegram:
     API_ID = int(getenv("API_ID", "22977776"))
     API_HASH = getenv("API_HASH", "2ac7223d720bdeec757cbc88ced57224")
-    BOT_TOKEN = getenv("BOT_TOKEN", "8224774305:AAHjHNJRMJQnBj8XZUZOcSmqCSzGGehaV8s")
+    BOT_TOKEN = getenv("BOT_TOKEN", "7720418486:AAFOb2VxvMO4F6lHakiIxKex9obclHT1sq4")
     HELPER_BOT_TOKEN = getenv("HELPER_BOT_TOKEN", "")
 
     BASE_URL = getenv("BASE_URL", "https://tamizhzone.koyeb.app").rstrip('/')
