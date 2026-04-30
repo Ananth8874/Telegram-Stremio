@@ -1,0 +1,41 @@
+type: web
+name: telegram-stremio
+project: telegram-stremio
+lang: docker
+
+docker:
+  dockerfile: Dockerfile
+
+instance_type: free
+
+regions:
+  - fra
+
+routes:
+  - path: /
+    port: 8080
+
+env:
+  PORT: 8080
+
+  API_ID:
+  API_HASH:
+  BOT_TOKEN:
+  HELPER_BOT_TOKEN:
+
+  OWNER_ID:
+
+  DATABASE:
+  
+  AUTH_CHANNEL:
+
+  TMDB_API:
+
+  BASE_URL:
+
+  ADMIN_USERNAME:
+  ADMIN_PASSWORD:
+
+  SUBSCRIPTION: "false"
+
+  Proxy: "False"
