@@ -8,17 +8,19 @@ ENV PATH="/app/.venv/bin:$PATH"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-	bash \
+        bash \
         git \
         curl \
         ca-certificates \
-        locales && \
-    locale-gen en_US.UTF-8 && \
-    rm -rf /var/lib/apt/lists/*
+        locales \
+        && locale-gen en_US.UTF-8 \
+        && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY . .
 RUN uv lock
 RUN uv sync --locked
 RUN chmod +x start.sh
-CMD ["uv", "run", "uvicorn", "Backend.fastapi.main:app", "--host", "0.0.0.0", "--port", "8080"]
+
+# Change this to run the full application (bot + web server)
+CMD ["uv", "run", "-m", "Backend"]
