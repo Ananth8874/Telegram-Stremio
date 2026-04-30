@@ -284,3 +284,7 @@ async def apply_media_rescan(
 @app.exception_handler(401)
 async def auth_exception_handler(request: Request, exc):
     return RedirectResponse(url="/login", status_code=302)
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
