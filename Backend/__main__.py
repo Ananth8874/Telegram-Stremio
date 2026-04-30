@@ -47,8 +47,11 @@ async def start_services():
         await setup_bot_commands(StreamBot)
         await asleep(2)
 
+        # 🔴 MOVE THIS BLOCK BEFORE idle()
         LOGGER.info('Initializing Telegram-Stremio Web Server...')
         await restart_notification()
+        
+        # Start FastAPI server
         loop.create_task(server.serve())
         loop.create_task(ping())
         
@@ -59,8 +62,10 @@ async def start_services():
             loop.create_task(subscription_checker_loop(StreamBot))
             LOGGER.info("Subscription Checker Task Started.")
         
+        # ✅ Now start idle() - this will keep everything running
         LOGGER.info("Telegram-Stremio Started Successfully!")
         await idle()
+        
     except Exception:
         LOGGER.error("Error during startup:\n" + format_exc())
 
