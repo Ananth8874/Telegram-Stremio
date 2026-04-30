@@ -21,4 +21,4 @@ COPY . .
 RUN uv lock
 RUN uv sync --locked
 RUN chmod +x start.sh
-CMD ["bash", "start.sh"]
+CMD ["uv", "run", "uvicorn", "Backend.fastapi.main:app", "--host", "0.0.0.0", "--port", "8080"]
