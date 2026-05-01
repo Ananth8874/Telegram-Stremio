@@ -1,0 +1,73 @@
+name: tamizhzone-backend
+type: WEB
+strategy:
+  type: DEPLOYMENT_STRATEGY_TYPE_ROLLING
+
+# Routes & Ports (Good ✓)
+routes:
+  - port: 8080
+    path: /
+    security_policies: null
+ports:
+  - port: 8080
+    protocol: http
+
+proxy_ports: []
+env: []
+
+# Regions (Good ✓)
+regions:
+  - fra
+
+# SCALING FIX #1
+scalings:
+  - scopes:
+      - region:fra
+    min: 1          # ← CRITICAL FIX: Changed from 0 to 1
+    max: 1
+    targets:
+      - sleep_idle_delay:
+          value: 0
+          deep_sleep_value: 3900
+          light_sleep_value: 0
+
+# Instance Type (Good ✓)
+instance_types:
+  - scopes:
+      - region:fra
+    type: free
+
+# Health Checks (Good ✓)
+health_checks:
+  - grace_period: 120      # ← 2 minutes for app startup
+    interval: 30
+    restart_limit: 3
+    timeout: 10
+    http:
+      port: 8080
+      path: /health        # ← Requires /health endpoint
+
+volumes: []
+config_files: []
+skip_cache: false
+mesh: DEPLOYMENT_MESH_AUTO
+
+# Git Configuration
+git:
+  repository: github.com/Ananth8874/Telegram-Stremio
+  branch: master
+  tag: ""
+  sha: 38ea43188ade5ba0d0ffc28afb06a6e44f885593
+  build_command: ""
+  run_command: ""          # ← CRITICAL FIX: Leave empty
+  no_deploy_on_push: false
+  workdir: ""
+  
+  # Docker overrides (all should be empty)
+  docker:
+    dockerfile: ""
+    entrypoint: []
+    command: []            # ← Leave empty
+    args: []
+    target: ""
+    privileged: false
