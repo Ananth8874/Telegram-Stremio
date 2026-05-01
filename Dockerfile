@@ -3,8 +3,9 @@ FROM ghcr.io/astral-sh/uv:debian-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV LANG=en_US.UTF-8
-ENV PATH="/app/.venv/bin:$PATH"
+PATH="/app/.venv/bin:$PATH"
 
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
@@ -12,15 +13,25 @@ RUN apt-get update && \
         git \
         curl \
         ca-certificates \
-        locales \
-        && locale-gen en_US.UTF-8 \
-        && rm -rf /var/lib/apt/lists/*
+        locales && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+# Copy project files
 COPY . .
-RUN uv lock
-RUN uv sync --locked
+
+# Install Python dependencies - use frozen for reproducible builds
+RUN uv sync --frozen
+
+# Make start script executable
 RUN chmod +x start.sh
 
-# Change this to run the full application (bot + web server)
-CMD ["uv", "run", "-m", "Backend"]
+# Health check for Koyeb (required for instance health)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+EXPOSE 8080
+
+CMD ["bash", "start.sh"]
