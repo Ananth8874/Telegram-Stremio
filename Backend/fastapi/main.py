@@ -286,5 +286,5 @@ async def auth_exception_handler(request: Request, exc):
     return RedirectResponse(url="/login", status_code=302)
 
 @app.get("/health")
-async def health():
-    return {"status": "ok"}
+async def health_check():
+    return {"status": "healthy"}
