@@ -3,7 +3,7 @@ FROM ghcr.io/astral-sh/uv:debian-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV LANG=en_US.UTF-8
-PATH="/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Install system dependencies
 RUN apt-get update && \
