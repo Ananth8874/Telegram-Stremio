@@ -17,8 +17,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-RUN uv lock
-RUN uv sync --locked
 RUN chmod +x start.sh
 CMD ["bash", "start.sh"]
